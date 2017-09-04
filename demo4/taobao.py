@@ -5,11 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from pyquery import PyQuery as pq
-#from config import *
 from urllib.parse import quote
 
-# browser = webdriver.Chrome()
-# browser = webdriver.PhantomJS(service_args=SERVICE_ARGS)
 
 MONGO_URL = 'localhost'
 MONGO_DB = 'taobao'
@@ -21,7 +18,11 @@ MAX_PAGE = 2
 
 SERVICE_ARGS = ['--load-images=false', '--disk-cache=true']
 
-browser = webdriver.Firefox()
+#browser = webdriver.Firefox()
+
+# browser = webdriver.Chrome()
+browser = webdriver.PhantomJS(service_args=SERVICE_ARGS)
+
 
 wait = WebDriverWait(browser, 10)
 client = pymongo.MongoClient(MONGO_URL)
@@ -70,7 +71,7 @@ def get_products():
             'location': item.find('.location').text()
         }
         print(product)
-        # save_to_mongo(product)
+        save_to_mongo(product)
 
 
 def save_to_mongo(result):
