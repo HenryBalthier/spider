@@ -17,5 +17,10 @@
 * Selenium模拟浏览器访问
 
 
-#### TODO
-1、scrapy
+
+### TODO
+1、Proj1 98论坛spider： respects + 多进程 + 图片/数据处理（9.11）
+
+2、Proj2 淘宝搜索spider： selenium + 多进程 + 数据处理（9.18）
+
+3、分布式部署
