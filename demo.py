@@ -57,4 +57,7 @@ def reqs2():
 
 if __name__ == '__main__':
     print('Hello World\n')
-    reqs2()
+    #reqs2()
+    k = [['a']*3]*3
+    k[0][0] = 'b'
+    print(k)
