@@ -64,18 +64,18 @@ def formatchecker(proxy):
     return True if re.findall(verify_regex, proxy) else False
 
 
-def proxychecker(proxy):
+def proxychecker(proxy, queue=None):
     if formatchecker(proxy):
         proxies = {"https": "https://{proxy}".format(proxy=proxy)}
         try:
             # 超过40秒的代理就不要了
             r = requests.get('https://www.baidu.com', proxies=proxies, timeout=20, verify=False)
             if r.status_code == 200:
-                #logger.debug('%s is ok' % proxy)
                 print(proxy, 'OK')
+                if queue is not None:
+                    queue.append(proxy)
                 return proxy
         except Exception as e:
-            #print('Checker Error')
             pass
     print(proxy, '--')
     return
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     for i in gg.freeproxy1():
         #print(proxychecker(i))
         pool.apply_async(proxychecker, args=(i, ))
-
+    '''
     threads = []
     for i in gg.freeproxy1():
         t = threading.Thread(target=proxychecker, args=(i, ))
@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
     for i in range(len(threads)):
         threads[i].join()
-
+    '''
     pool.close()
     pool.join()
     print('---END---')
