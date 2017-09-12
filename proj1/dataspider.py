@@ -15,7 +15,7 @@ headers = {
     'Host': 'www.shfe.com.cn',
     'Connection': 'keep-alive',
 }
-client = MongoClient()
+client = MongoClient(connect=False)
 db = client['data_daily']
 
 
@@ -65,9 +65,8 @@ def get_days(begin, end):
         begin_date += datetime.timedelta(days=1)
 
 def main(date):
-    #date = '20170830'
-    url = 'http://www.shfe.com.cn/data/dailydata/kx/kx{date}.dat'.format(date=date)
 
+    url = 'http://www.shfe.com.cn/data/dailydata/kx/kx{date}.dat'.format(date=date)
     json = get_page(url)
     res = parse_page(json)
     table = 'D' + date
@@ -77,5 +76,11 @@ def main(date):
         save_to_mongo(table, i)
 
 if __name__ == '__main__':
+    from multiprocessing.pool import Pool
+
+    pool = Pool()
     for i in get_days('20170801', '20170901'):
-        main(date=i)
+        pool.apply_async(main, args=(i, ))
+
+    pool.close()
+    pool.join()

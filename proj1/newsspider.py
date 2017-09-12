@@ -3,10 +3,8 @@
 
 import re
 import requests
-from bs4 import BeautifulSoup as bs
 from pyquery import PyQuery as pq
 from pymongo import MongoClient
-import json
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko)',
@@ -17,8 +15,9 @@ headers = {
     'Connection': 'keep-alive',
 }
 
-client = MongoClient()
+client = MongoClient(connect=False)
 db = client['news_daily']
+
 
 def get_page(url):
     try:
@@ -40,6 +39,7 @@ def urlchecker(url):
 
 def titles(url):
     html = get_page(url)
+
     p = pq(html)
 
     url_list = []
@@ -59,6 +59,7 @@ def titles(url):
 def articles(dct):
     table = 'T' + dct['ID'][0:8]
     html = get_page(dct['url'])
+
     p = pq(html)
 
     for i in p('p'):
@@ -74,11 +75,28 @@ def save_to_mongo(table, results):
     if collection.insert(results):
         print('Save to Mongo Successfully!')
 
+def main(url):
+    import threading
+
+    threads = []
+    for i in titles(url):
+        t = threading.Thread(target=articles, args=(i,))
+        threads.append(t)
+        t.start()
+
+    for i in range(len(threads)):
+        threads[i].join()
+
 
 if __name__ == '__main__':
-    page = 1
+    from multiprocessing.pool import Pool
+
+    pool = Pool()
+    page = 5
     for i in range(page):
         pagenumber = '_' + str(i) if i > 0 else ''
         url = 'http://futures.eastmoney.com/news/cqhdd{}.html'.format(pagenumber)
-        for j in titles(url):
-            articles(j)
+        pool.apply_async(main, args=(url, ))
+
+    pool.close()
+    pool.join()
