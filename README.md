@@ -21,4 +21,4 @@
 
 **其他功能前瞻：**
 * 1、结合jieba分词提取新闻文本信息，结合通联舆情分析数据学习出提取的新闻信息舆情值
-* 2、结合digger项目，动态分析行情
+* 2、结合[digger项目](https://github.com/HenryBalthier/digger)，动态分析行情
